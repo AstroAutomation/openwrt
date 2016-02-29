@@ -1,0 +1,24 @@
+config wifi-device  radio0
+    option type     mac80211
+    option channel  auto 
+    option hwmode   11g
+    option path     '10180000.wmac'
+    option htmode   HT20
+	option country US
+
+config wifi-iface
+    option device   radio0
+    option network lan 
+    option mode     ap
+    option ssid     TwistHome
+    option encryption none
+    option disabled 0
+
+config wifi-iface
+    option device   radio0
+    option mode     sta 
+    option network  wan
+    option ssid     ''
+    option encryption none
+    option key ''
+    option disabled 1
