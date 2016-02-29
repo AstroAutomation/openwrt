@@ -197,7 +197,7 @@ define Package/wpa-supplicant
 endef
 
 define Package/wpa-supplicant/Description
-  WPA Supplicant
+	WPA Supplicant
 endef
 
 define Package/wpa-supplicant/config
@@ -325,15 +325,16 @@ define Build/Compile/wpad
 		$(call Build/RunMake,wpa_supplicant,-s MULTICALL=1 dump_cflags) | \
 		sed -e 's,-n ,,g' -e 's^$(TARGET_CFLAGS)^^' \
 	` > $(PKG_BUILD_DIR)/.cflags
-	+$(call Build/RunMake,hostapd, \
+	$(call Build/RunMake,hostapd, \
 		CFLAGS="$$$$(cat $(PKG_BUILD_DIR)/.cflags)" \
 		MULTICALL=1 \
 		hostapd_cli hostapd_multi.a \
 	)
-	+$(call Build/RunMake,wpa_supplicant, \
+	$(call Build/RunMake,wpa_supplicant, \
 		CFLAGS="$$$$(cat $(PKG_BUILD_DIR)/.cflags)" \
 		MULTICALL=1 \
 		wpa_cli wpa_supplicant_multi.a \
+		libwpa_ctrl.a
 	)
 	$(TARGET_CC) -o $(PKG_BUILD_DIR)/wpad \
 		$(TARGET_CFLAGS) \
@@ -352,12 +353,14 @@ endef
 define Build/Compile/supplicant
 	$(call Build/RunMake,wpa_supplicant, \
 		wpa_cli wpa_supplicant \
+		libwpa_ctrl.a
 	)
 endef
 
 define Build/Compile/supplicant-full
 	$(call Build/RunMake,wpa_supplicant, \
 		eapol_test \
+		libwpa_ctrl.a
 	)
 endef
 
@@ -399,12 +402,18 @@ ifneq ($(LOCAL_TYPE),supplicant)
   endef
 endif
 
+define Build/InstallDev
+	$(CP) $(PKG_BUILD_DIR)/src/common/wpa_ctrl.h $(STAGING_DIR)/usr/include/
+	$(CP) $(PKG_BUILD_DIR)/wpa_supplicant/libwpa_ctrl.a $(STAGING_DIR)/usr/lib/
+endef
+
 define Package/wpad/install
 	$(call Install/hostapd,$(1))
 	$(call Install/supplicant,$(1))
 	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wpad $(1)/usr/sbin/
 	$(LN) wpad $(1)/usr/sbin/hostapd
 	$(LN) wpad $(1)/usr/sbin/wpa_supplicant
+	
 endef
 Package/wpad-mini/install = $(Package/wpad/install)
 Package/wpad-mesh/install = $(Package/wpad/install)

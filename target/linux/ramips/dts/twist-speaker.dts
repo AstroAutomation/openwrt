@@ -3,7 +3,7 @@
 /include/ "rt5350.dtsi"
 
 / {
-	compatible = "RT5350F-OLINUXINO", "ralink,rt5350-soc";
+	compatible = "ralink,rt5350-soc";
 	model = "Astro-Twist";
 	
 	palmbus@10000000 {
@@ -39,14 +39,15 @@
 				
 				partition@A0000 {
 					label = "firmware";
-					reg = <0xA0000 0x7b0000>;
+					reg = <0xA0000 0xf60000>;
 					read-only;
 				};
 				
-				partition@850000 {
-					label = "firmware-alt";
-					reg = <0x850000 0x7b0000>;
-				};
+				//partition@850000 {
+				//	label = "firmware-alt";
+				//	reg = <0x850000 0x7b0000>;
+				//};
+				
 			};
 		};
 		gpio1: gpio@660 {

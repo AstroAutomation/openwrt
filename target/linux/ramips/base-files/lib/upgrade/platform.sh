@@ -78,6 +78,8 @@ platform_check_image() {
 	omni-emb | \
 	omni-emb-hpm | \
 	omni-plug | \
+	twist-speaker | \
+	twist-camera | \
 	olinuxino-rt5350f | \
 	olinuxino-rt5350f-evb | \
 	psr-680w | \

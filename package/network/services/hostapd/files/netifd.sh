@@ -79,7 +79,7 @@ hostapd_prepare_device_config() {
 		[ "$hwmode" = "a" -a "$doth" -gt 0 ] && append base_cfg "ieee80211h=1" "$N"
 	}
 	[ -n "$hwmode" ] && append base_cfg "hw_mode=$hwmode" "$N"
-
+	
 	local brlist= br
 	json_get_values basic_rate_list basic_rate
 	for br in $basic_rate_list; do
@@ -109,6 +109,7 @@ EOF
 
 hostapd_common_add_bss_config() {
 	config_add_string 'bssid:macaddr' 'ssid:string'
+	config_add_string 'vendor_ie:vendor_ie'
 	config_add_boolean wds wmm uapsd hidden
 
 	config_add_int maxassoc max_inactivity
@@ -181,8 +182,8 @@ hostapd_set_bss_options() {
 		maxassoc max_inactivity disassoc_low_ack isolate auth_cache \
 		wps_pushbutton wps_label ext_registrar wps_pbc_in_m1 \
 		wps_device_type wps_device_name wps_manufacturer wps_pin \
-		macfilter ssid wmm uapsd hidden short_preamble rsn_preauth \
-		iapp_interface
+		macfilter ssid vendor_ie wmm uapsd hidden short_preamble \
+		rsn_preauth iapp_interface
 
 	set_default isolate 0
 	set_default maxassoc 0
@@ -336,7 +337,10 @@ hostapd_set_bss_options() {
 		append bss_conf "config_methods=$config_methods" "$N"
 		[ "$wps_pbc_in_m1" -gt 0 ] && append bss_conf "pbc_in_m1=$wps_pbc_in_m1" "$N"
 	}
-
+	
+	
+	[ -n "$vendor_ie" ] && append bss_conf "vendor_elements=$vendor_ie" "$N"
+	
 	append bss_conf "ssid=$ssid" "$N"
 	[ -n "$network_bridge" ] && append bss_conf "bridge=$network_bridge" "$N"
 	[ -n "$iapp_interface" ] && {

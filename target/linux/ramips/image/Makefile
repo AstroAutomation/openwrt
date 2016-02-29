@@ -201,10 +201,6 @@ ralink_default_fw_size_16M=16121856
 BuildFirmware/Default16M/squashfs=$(call BuildFirmware/OF,$(1),$(2),$(3),$(ralink_default_fw_size_16M),$(4))
 BuildFirmware/Default16M/initramfs=$(call BuildFirmware/OF/initramfs,$(1),$(2),$(3),$(4))
 
-ralink_default_fw_size_32M=33226752
-BuildFirmware/Default32M/squashfs=$(call BuildFirmware/OF,$(1),$(2),$(3),$(ralink_default_fw_size_32M),$(4))
-BuildFirmware/Default32M/initramfs=$(call BuildFirmware/OF/initramfs,$(1),$(2),$(3),$(4))
-
 # Build images for a custom sized flash layout
 # $(1) = squashfs/initramfs
 # $(2) = lowercase board name
@@ -582,6 +578,10 @@ Image/Build/Profile/OMNI-EMB=$(call BuildFirmware/Default8M/$(1),$(1),omni-emb,O
 
 Image/Build/Profile/OMNI-PLUG=$(call BuildFirmware/Default8M/$(1),$(1),omni-plug,OMNI-PLUG)
 
+Image/Build/Profile/twist-speaker=$(call BuildFirmware/Default16M/$(1),$(1),twist-speaker,twist-speaker)
+
+Image/Build/Profile/twist-camera=$(call BuildFirmware/Default16M/$(1),$(1),twist-camera,twist-camera)
+
 Image/Build/Profile/OLINUXINO-RT5350F=$(call BuildFirmware/Default8M/$(1),$(1),olinuxino-rt5350f,OLINUXINO-RT5350F)
 
 Image/Build/Profile/OLINUXINO-RT5350F-EVB=$(call BuildFirmware/Default8M/$(1),$(1),olinuxino-rt5350f-evb,OLINUXINO-RT5350F-EVB)
@@ -613,6 +613,7 @@ Image/Build/Profile/W502U=$(call BuildFirmware/Default8M/$(1),$(1),w502u,W502U)
 Image/Build/Profile/WCR150GN=$(call BuildFirmware/Default4M/$(1),$(1),wcr150gn,WCR150GN)
 
 
+
 buffalo_whrg300n_mtd_size=3801088
 define BuildFirmware/WHRG300N/squashfs
 	$(call BuildFirmware/Default4M/$(1),$(1),whr-g300n,WHR-G300N)
@@ -630,8 +631,6 @@ define BuildFirmware/WHRG300N/squashfs
 endef
 BuildFirmware/WHRG300N/initramfs=$(call BuildFirmware/OF/initramfs,$(1),whr-g300n,WHR-G300N)
 Image/Build/Profile/WHRG300N=$(call BuildFirmware/WHRG300N/$(1),$(1))
-
-Image/Build/Profile/WIZFI630A=$(call BuildFirmware/Default16M/$(1),$(1),wizfi630a,WIZFI630A)
 
 Image/Build/Profile/WIZARD8800=$(call BuildFirmware/Default8M/$(1),$(1),wizard-8800,WIZARD8800,Linux Kernel Image)
 
@@ -748,6 +747,8 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/NW718,$(1))
 	$(call Image/Build/Profile/OMNI-EMB,$(1))
 	$(call Image/Build/Profile/OMNI-PLUG,$(1))
+	$(call Image/Build/Profile/twist-speaker,$(1))
+	$(call Image/Build/Profile/twist-camera,$(1))
 	$(call Image/Build/Profile/OLINUXINO-RT5350F,$(1))
 	$(call Image/Build/Profile/OLINUXINO-RT5350F-EVB,$(1))
 	$(call Image/Build/Profile/PSR-680W,$(1))
@@ -767,7 +768,6 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/WCR150GN,$(1))
 	$(call Image/Build/Profile/WHRG300N,$(1))
 	$(call Image/Build/Profile/WIZARD8800,$(1))
-	$(call Image/Build/Profile/WIZFI630A,$(1))
 	$(call Image/Build/Profile/WL_330N,$(1))
 	$(call Image/Build/Profile/WL_330N3G,$(1))
 	$(call Image/Build/Profile/WL341V3,$(1))
@@ -928,7 +928,7 @@ endif
 #
 
 ifeq ($(SUBTARGET),mt7621)
-  TARGET_DEVICES += mt7621 wsr-600 wsr-1166 dir-860l-b1 firewrt pbr-m1 re6500 zbt-wg2626
+  TARGET_DEVICES += mt7621 wsr-600 wsr-1166 dir-860l-b1 firewrt pbr-m1 re6500
 endif
 
 define Device/mt7621
@@ -974,11 +974,6 @@ define Device/pbr-m1
   IMAGE_SIZE := $(ralink_default_fw_size_16M)
 endef
 
-define Device/zbt-wg2626
-  DTS := ZBT-WG2626
-  IMAGE_SIZE := $(ralink_default_fw_size_16M)
-endef
-
 #
 # MT7628 Profiles
 #
@@ -988,21 +983,6 @@ Image/Build/Profile/MT7628=$(call BuildFirmware/Default4M/$(1),$(1),mt7628,MT762
 ifeq ($(SUBTARGET),mt7628)
 define Image/Build/Profile/Default
 	$(call Image/Build/Profile/MT7628,$(1))
-endef
-endif
-
-
-#
-# MT7688 Profiles
-#
-
-Image/Build/Profile/MT7688=$(call BuildFirmware/Default4M/$(1),$(1),mt7628,MT7628)
-Image/Build/Profile/LinkIt7688=$(call BuildFirmware/Default32M/$(1),$(1),LinkIt7688,LINKIT7688)
-
-ifeq ($(SUBTARGET),mt7628)
-define Image/Build/Profile/Default
-	$(call Image/Build/Profile/MT7688,$(1))
-	$(call Image/Build/Profile/LinkIt7688,$(1))
 endef
 endif
 

@@ -3,8 +3,8 @@
 /include/ "rt5350.dtsi"
 
 / {
-	compatible = "RT5350F-OLINUXINO", "ralink,rt5350-soc";
-	model = "Astro-Twist";
+	compatible = "ralink,rt5350-soc";
+	model = "Twist-Camera";
 	
 	palmbus@10000000 {
 		spi@b00 {
@@ -47,6 +47,7 @@
 					label = "firmware-alt";
 					reg = <0x850000 0x7b0000>;
 				};
+				
 			};
 		};
 		gpio1: gpio@660 {
@@ -98,12 +99,12 @@
 		ralink,mtd-eeprom = <&factory 0>;
 		ralink,led-polarity = <1>;
 	};
-
+	
 	ehci@101c0000 {
-		status = "disabled";
+		status = "okay";
 	};
 
 	ohci@101c1000 {
-		status = "disabled";
-    };
+		status = "okay";
+	};
 };
