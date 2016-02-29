@@ -209,6 +209,8 @@ hostapd_set_bss_options() {
 		append "$var" "manufacturer=$manufacturer" "$N"
 		append "$var" "config_methods=$config_methods" "$N"
 	}
+  
+	append bss_conf "vendor_elements=" "$N"
 
 	append "$var" "ssid=$ssid" "$N"
 	[ -n "$bridge" ] && append "$var" "bridge=$bridge" "$N"
@@ -250,7 +252,7 @@ hostapd_set_bss_options() {
 
 		[ -n "wpa_key_mgmt" ] && append "$var" "wpa_key_mgmt=$wpa_key_mgmt"
 	fi
-
+    
 	if [ "$wpa" -ge "2" ]
 	then
 		# RSN -> allow preauthentication. You have two

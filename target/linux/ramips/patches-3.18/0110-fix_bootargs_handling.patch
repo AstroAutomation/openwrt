@@ -27,14 +27,16 @@
  extern struct boot_param_header __image_dtb;
  
  void __init plat_mem_setup(void)
-@@ -78,7 +89,9 @@ void __init plat_mem_setup(void)
+@@ -78,7 +89,11 @@ void __init plat_mem_setup(void)
  	 */
  	__dt_setup_arch(&__image_dtb);
  
 -	strlcpy(arcs_cmdline, boot_command_line, COMMAND_LINE_SIZE);
 +	of_scan_flat_dt(early_init_dt_find_chosen, NULL);
-+	if (chosen_dtb)
-+		strlcpy(arcs_cmdline, boot_command_line, COMMAND_LINE_SIZE);
++	if (chosen_dtb) {
++		strlcat(arcs_cmdline, " ", COMMAND_LINE_SIZE);
++		strlcat(arcs_cmdline, boot_command_line, COMMAND_LINE_SIZE);
++	}
  
  	of_scan_flat_dt(early_init_dt_find_memory, NULL);
  	if (memory_dtb)

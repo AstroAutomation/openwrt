@@ -43,7 +43,6 @@ generate_network() {
 	uci -q batch <<EOF
 delete network.$1
 set network.$1='interface'
-set network.$1.ifname='$ifname'
 set network.$1.force_link=1
 set network.$1.proto='none'
 set network.$1.macaddr='$macaddr'
@@ -51,7 +50,6 @@ EOF
 
 	case $1 in
 	lan) uci -q batch <<EOF
-set network.$1.type='bridge'
 set network.$1.proto='static'
 set network.$1.ipaddr='192.168.1.1'
 set network.$1.netmask='255.255.255.0'
@@ -62,7 +60,6 @@ EOF
 set network.$1.proto='dhcp'
 delete network.wan6
 set network.wan6='interface'
-set network.wan6.ifname='$ifname'
 set network.wan6.proto='dhcpv6'
 EOF
 		;;
@@ -86,11 +83,11 @@ generate_switch_vlan() {
 	json_select ..
 	json_select ..
 
-	uci -q batch <<EOF
-add network switch_vlan
-set network.@switch_vlan[-1].device='$device'
-set network.@switch_vlan[-1].vlan='$vlan'
-set network.@switch_vlan[-1].ports='$ports ${cpu_port}t'
+#	uci -q batch <<EOF
+#add network switch_vlan
+#set network.@switch_vlan[-1].device='$device'
+#set network.@switch_vlan[-1].vlan='$vlan'
+#set network.@switch_vlan[-1].ports='$ports ${cpu_port}t'
 EOF
 }
 
@@ -103,11 +100,11 @@ generate_switch() {
 	json_get_vars enable reset blinkrate cpu_port
 
 	uci -q batch <<EOF
-add network switch
-set network.@switch[-1].name='$key'
-set network.@switch[-1].reset='$reset'
-set network.@switch[-1].enable_vlan='$enable'
-set network.@switch[-1].blinkrate='$blinkrate'
+#add network switch
+#set network.@switch[-1].name='$key'
+#set network.@switch[-1].reset='$reset'
+#set network.@switch[-1].enable_vlan='$enable'
+#set network.@switch[-1].blinkrate='$blinkrate'
 EOF
 	[ -n "$cpu_port" ] && {
 		json_get_keys vlans vlans

@@ -336,6 +336,8 @@ hostapd_set_bss_options() {
 		append bss_conf "config_methods=$config_methods" "$N"
 		[ "$wps_pbc_in_m1" -gt 0 ] && append bss_conf "pbc_in_m1=$wps_pbc_in_m1" "$N"
 	}
+	
+	append bss_conf "vendor_elements=" "$N"
 
 	append bss_conf "ssid=$ssid" "$N"
 	[ -n "$network_bridge" ] && append bss_conf "bridge=$network_bridge" "$N"
