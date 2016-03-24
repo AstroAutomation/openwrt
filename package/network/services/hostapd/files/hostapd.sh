@@ -209,8 +209,6 @@ hostapd_set_bss_options() {
 		append "$var" "manufacturer=$manufacturer" "$N"
 		append "$var" "config_methods=$config_methods" "$N"
 	}
-  
-	append bss_conf "vendor_elements=" "$N"
 
 	append "$var" "ssid=$ssid" "$N"
 	[ -n "$bridge" ] && append "$var" "bridge=$bridge" "$N"
