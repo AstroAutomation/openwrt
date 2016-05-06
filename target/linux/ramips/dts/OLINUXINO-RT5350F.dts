@@ -35,13 +35,13 @@
 				};
 
 				partition@50000 {
-					label = "firmware";
-					reg = <0x50000 0x7b0000>;
+					label = "nvram";
+					reg = <0x50000 0x50000>;
 				};
 				
-				partition@800000 {
-					label = "nvram";
-					reg = <0x800000 0x50000>;
+				partition@A0000 {
+					label = "firmware";
+					reg = <0xA0000 0x7b0000>;
 				};
 				
 				partition@850000 {
@@ -78,7 +78,7 @@
 	pinctrl {
 		state_default: pinctrl0 {
 			gpio {
-				ralink,group = "jtag", "led", "spi_cs1";
+				ralink,group = "led", "spi_cs1";
 				ralink,function = "gpio";
 			};
 		};
