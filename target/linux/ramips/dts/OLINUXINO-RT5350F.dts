@@ -63,7 +63,7 @@
 		
 		i2c@900 {
 			status = "okay";
-			clock-frequency = <100000>;
+			clock-frequency = <400000>;
 
 			mfi_auth: i2c@11 {
 				compatible = "apple_auth_coproc";
