@@ -1,34 +1,36 @@
-config wifi-device  radio0
-    option type     mac80211
-    option channel  auto 
-    option hwmode   11g
+config wifi-device  'radio0'
+    option type     'mac80211'
+    option channel  'auto' 
+    option hwmode   '11g'
     option path     '10180000.wmac'
-    option htmode   HT20
-	option country US
+    option htmode   'HT20'
+	option country  'US'
+    option beacon_int '25'
+    option require_mode 'n'
 	
-config wifi-iface 'apconfig'
-    option device   radio0
-    option network lan 
-    option mode     ap
-    option ssid     TwistHome
-    option encryption none
-    option disabled 0
+config wifi-iface   'apconfig'
+    option device   'radio0'
+    option network  'lan'
+    option mode     'ap'
+    option ssid     'TwistHome'
+    option encryption 'none'
+    option disabled '0'
 
 config wifi-iface 'station'
-    option device   radio0
-    option mode     sta 
-    option network  wan
+    option device   'radio0'
+    option mode     'sta'
+    option network  'wan'
     option ssid     ''
-    option encryption none
-    option key ''
-    option disabled 1
+    option encryption 'none'
+    option key      ''
+    option disabled '1'
     
 config wifi-iface 'apbridge'
-    option device   radio0
-    option network lan 
-    option mode     ap
+    option device   'radio0'
+    option network  'lan' 
+    option mode     'ap'
     option ssid     ''
-    option key ''
-    option encryption none
-    option disabled 1
+    option key      ''
+    option encryption 'none'
+    option disabled '1'
     
