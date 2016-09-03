@@ -33,4 +33,8 @@ config wifi-iface 'apbridge'
     option key      ''
     option encryption 'none'
     option disabled '1'
-    
+
+config wifi-iface 'monitor'
+    option device   'radio0'
+    option mode     'monitor'
+    option disabled '0'
