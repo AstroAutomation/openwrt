@@ -10,7 +10,7 @@
 	};
 
 	chosen {
-                bootargs = "console=null,115200 lpj=1198080 silent";
+                bootargs = "console=null,115200 lpj=1198080 silent quiet";
 		//bootargs = "console=ttyS0,115200 lpj=1198080 initcall_debug printk_time=1 loglevel=8 quiet";
 		//bootargs = "console=ttyS0,115200 quiet";
 		//bootargs = "console=null lpj=1198080 quiet";
