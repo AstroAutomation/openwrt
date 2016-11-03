@@ -9,13 +9,13 @@
 	palmbus@10000000 {
 		spi@b00 {
 			status = "okay";
-			w25q128@0 {
+			m25p80@0 {
 				#address-cells = <1>;
 				#size-cells = <1>;
 				compatible = "w25q128";
 				reg = <0 0>;
 				linux,modalias = "w25q128";
-				spi-max-frequency = <40000000>;
+				spi-max-frequency = <10000000>;
 
 				partition@0 {
 					label = "u-boot";
@@ -71,8 +71,6 @@
 				    
 				gpio-reset = <&gpio0>;
 			};
-			
-			
 		};
 	};
 
@@ -81,11 +79,6 @@
 			gpio {
 				ralink,group = "led", "spi_cs1";
 				ralink,function = "gpio";
-			};
-			
-			uartf_i2s {
-				ralink,group = "uartf";
-				ralink,function = "i2s uartf";
 			};
 		};
 	};
