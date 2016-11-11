@@ -1,5 +1,5 @@
 config system
-	option hostname TwistHome
+	option hostname TwistSpeaker
 	option timezone	UTC
 
 config timeserver ntp
