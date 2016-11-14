@@ -1,0 +1,36 @@
+#!/bin/sh /etc/rc.common
+# Copyright (C) 2014 OpenWrt.org
+
+START=10
+USE_PROCD=1
+
+
+wireless_config() {
+	local ssid
+
+	# make sure that the ssid for APCONFIG always is unique by appending the mac address
+	MACADDR=`cat /sys/devices/10180000.wmac/ieee80211/phy0/macaddress `
+	MACUNIQUE=`echo ${MACADDR//:} | cut -c 7-`
+	
+	config_get _ssid apconfig ssid
+	if [[ "${_ssid#*${MACUNIQUE}}" == "$_ssid" ]]
+        then
+            append _ssid "${MACUNIQUE}"
+            uci_set wireless apconfig ssid "${_ssid}"
+            uci_commit wireless
+        fi
+}
+
+reload_service() {
+	config_load wireless
+	wireless_config
+}
+
+service_triggers()
+{
+	procd_add_reload_trigger "wireless"
+}
+
+start_service() {
+	reload_service
+}
