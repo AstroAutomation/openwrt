@@ -1,5 +1,7 @@
---- a/drivers/net/wireless/rt2x00/rt2800.h	2016-05-05 23:31:13.710964523 -0400
-+++ b/drivers/net/wireless/rt2x00/rt2800.h	2016-05-06 00:37:43.538959681 -0400
+Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800.h
+===================================================================
+--- compat-wireless-2016-01-10.orig/drivers/net/wireless/ralink/rt2x00/rt2800.h	2016-09-19 12:32:29.204506710 -0400
++++ compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800.h	2016-09-19 12:33:53.124593452 -0400
 @@ -95,6 +95,7 @@
  #define REV_RT3090E			0x0211
  #define REV_RT3390E			0x0211
@@ -8,31 +10,31 @@
  #define REV_RT5390F			0x0502
  #define REV_RT5390R			0x1502
  #define REV_RT5592C			0x0221
---- a/drivers/net/wireless/rt2x00/rt2800lib.c	2016-05-05 23:31:13.714965419 -0400
-+++ b/drivers/net/wireless/rt2x00/rt2800lib.c	2016-05-06 00:54:54.395495661 -0400
-@@ -6182,6 +6182,9 @@ static void rt2800_init_bbp_3290(struct
+Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+===================================================================
+--- compat-wireless-2016-01-10.orig/drivers/net/wireless/ralink/rt2x00/rt2800lib.c	2016-09-19 12:32:29.208506905 -0400
++++ compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800lib.c	2016-09-19 12:39:21.312486507 -0400
+@@ -6159,6 +6159,9 @@
  
  static void rt2800_init_bbp_3352(struct rt2x00_dev *rt2x00dev)
  {
-+        int ant, div_mode;
-+        u16 eeprom;
-+        u8 value;
++	int ant, div_mode;
++	u16 eeprom;
++	u8 value;
  	rt2800_bbp_write(rt2x00dev, 3, 0x00);
  	rt2800_bbp_write(rt2x00dev, 4, 0x50);
  
-@@ -6232,6 +6235,7 @@ static void rt2800_init_bbp_3352(struct
+@@ -6189,6 +6192,7 @@
  	if (rt2x00_rt(rt2x00dev, RT5350)) {
- 		rt2800_bbp_write(rt2x00dev, 105, 0x3c);
- 		rt2800_bbp_write(rt2x00dev, 106, 0x03);
+ 		rt2800_bbp_write(rt2x00dev, 83, 0x7a);
+ 		rt2800_bbp_write(rt2x00dev, 84, 0x9a);
 +		rt2800_bbp_write(rt2x00dev, 128, 0x12);
  	} else {
- 		rt2800_bbp_write(rt2x00dev, 105, 0x34);
- 		rt2800_bbp_write(rt2x00dev, 106, 0x05);
-@@ -6260,12 +6264,34 @@ static void rt2800_init_bbp_3352(struct
- 	rt2800_bbp_write(rt2x00dev, 143, 0xa2);
- 
+ 		rt2800_bbp_write(rt2x00dev, 83, 0x6a);
+ 		rt2800_bbp_write(rt2x00dev, 84, 0x99);
+@@ -6239,10 +6243,30 @@
  	rt2800_bbp_write(rt2x00dev, 148, 0xc8);
-
+ 
  	if (rt2x00_rt(rt2x00dev, RT5350)) {
 -		rt2800_bbp_write(rt2x00dev, 150, 0x40); /* Antenna Software OFDM */
 -		rt2800_bbp_write(rt2x00dev, 151, 0x30); /* Antenna Software CCK */
@@ -40,8 +42,7 @@
 +		rt2800_disable_unused_dac_adc(rt2x00dev);
 +
 +		rt2800_eeprom_read(rt2x00dev, EEPROM_NIC_CONF1, &eeprom);
-+		div_mode = rt2x00_get_field16(eeprom,
-+					      EEPROM_NIC_CONF1_ANT_DIVERSITY);
++		div_mode = rt2x00_get_field16(eeprom, EEPROM_NIC_CONF1_ANT_DIVERSITY);
 +		ant = (div_mode == 3 || div_mode == 0) ? 1 : 0;
 +
 +		/* This chip has hardware antenna diversity*/
@@ -49,12 +50,11 @@
 +			rt2800_bbp_write(rt2x00dev, 150, 0); /* Disable Antenna Software OFDM */
 +			rt2800_bbp_write(rt2x00dev, 151, 0); /* Disable Antenna Software CCK */
 +		} else {
-+                        rt2800_bbp_write(rt2x00dev, 150, 0x40); /* Antenna Software OFDM */
-+                        rt2800_bbp_write(rt2x00dev, 151, 0x30); /* Antenna Software CCK */
++			rt2800_bbp_write(rt2x00dev, 150, 0x40); /* Antenna Software OFDM */
++			rt2800_bbp_write(rt2x00dev, 151, 0x30); /* Antenna Software CCK */
 +		}
-+		
  		rt2800_bbp_write(rt2x00dev, 154, 0); /* Clear previously selected antenna */
-+
++		
 +		rt2800_bbp_read(rt2x00dev, 152, &value);
 +		if (ant == 0)
 +			rt2x00_set_field8(&value, BBP152_RX_DEFAULT_ANT, 1);
@@ -66,24 +66,23 @@
  	}
  }
  
-@@ -8843,12 +8869,18 @@ static int rt2800_init_eeprom(struct rt2
+@@ -8821,12 +8845,18 @@
  	if (rt2x00_rt(rt2x00dev, RT3070) ||
  	    rt2x00_rt(rt2x00dev, RT3090) ||
  	    rt2x00_rt(rt2x00dev, RT3352) ||
 -	    rt2x00_rt(rt2x00dev, RT3390)) {
 +	    rt2x00_rt(rt2x00dev, RT3390) ||
-+           rt2x00_rt(rt2x00dev, RT5350)) {
++	    rt2x00_rt(rt2x00dev, RT5350)) {
  		value = rt2x00_get_field16(eeprom,
  				EEPROM_NIC_CONF1_ANT_DIVERSITY);
  		switch (value) {
  		case 0:
--		case 1:
-+		case 1: 
-+                    if (rt2x00_rt_rev_gte(rt2x00dev, RT5350, REV_RT5350F)) {
-+                            rt2x00dev->default_ant.tx = ANTENNA_HW_DIVERSITY; /* Unused */
-+                            rt2x00dev->default_ant.rx = ANTENNA_HW_DIVERSITY; /* Unused */
-+                            break;
-+                    }
+ 		case 1:
++			if (rt2x00_rt_rev_gte(rt2x00dev, RT5350, REV_RT5350F)) {
++				rt2x00dev->default_ant.tx = ANTENNA_HW_DIVERSITY; /* Unused */
++				rt2x00dev->default_ant.rx = ANTENNA_HW_DIVERSITY; /* Unused */
++				break;
++			}
  		case 2:
  			rt2x00dev->default_ant.tx = ANTENNA_A;
  			rt2x00dev->default_ant.rx = ANTENNA_A;
