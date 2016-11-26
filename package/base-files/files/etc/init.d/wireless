@@ -1,3 +1,6 @@
+
+
+
 #!/bin/sh /etc/rc.common
 # Copyright (C) 2014 OpenWrt.org
 
@@ -18,6 +21,8 @@ wireless_config() {
             append _ssid "${MACUNIQUE}"
             uci_set wireless apconfig ssid "${_ssid}"
             uci_commit wireless
+            
+	    echo "Changed WiFi SSID to ${_ssid}" > /dev/kmsg
         fi
 }
 
