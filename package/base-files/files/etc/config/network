@@ -6,22 +6,24 @@ config interface loopback
         option ipaddr	127.0.0.1
         option netmask	255.0.0.0
 
-config interface    sta
-        option proto    dhcp	
-        option force_link 1
+config globals globals
+        option ula_prefix auto
+        
     
-config interface    sta_static
-        option proto    static
-        option ipaddr   192.168.1.1
-        option netmask  255.255.255.0
-        #option ip6addr  
-        option force_link 1
-
-config interface    ap
+config interface    lan
         option proto    static
         option ipaddr   '192.168.1.1'
         option netmask  '255.255.255.0'
         option force_link   1 
 
-config globals globals
-        option ula_prefix auto
+config interface    wan
+        option proto    dhcp
+        option hostname 'Twist-Speaker'
+        option vendorid 'Twist Home'
+        option force_link 1
+        
+config interface    wan6
+        option proto    dhcp6
+        option hostname 'Twist-Speaker'
+        option vendorid 'Twist Home'
+        option force_link 1
