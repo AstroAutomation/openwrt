@@ -16,3 +16,8 @@ export PS1='\u@\h:\w\$ '
 [ -x /usr/bin/ldd ] || ldd() { LD_TRACE_LOADED_OBJECTS=1 $*; }
 
 export SERIAL_NUM="SPKA19$(head -c 280 /dev/mtd2 | tail -c 8)"
+
+# migration path... if the serial number is invalid, use the mac
+if [ "$SERIAL_NUM" = "SPKA19SERIALNO" ]; then
+    export SERIAL_NUM="TwistSpeaker-$(od -tx1 -j 7 -N 3 -An /dev/mtd2 | tr -d ' ')"
+fi
