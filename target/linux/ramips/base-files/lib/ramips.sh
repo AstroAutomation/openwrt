@@ -247,6 +247,12 @@ ramips_board_detect() {
 	*"Omnima MiniPlug")
 		name="omni-plug"
 		;;
+	*"twist-speaker")
+		name="twist-speaker"
+		;;
+	*"twist-camera")
+		name="twist-camera"
+		;;
 	*"OLinuXino-RT5350F")
 		name="olinuxino-rt5350f"
 		;;

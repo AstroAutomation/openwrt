@@ -578,6 +578,10 @@ Image/Build/Profile/OMNI-EMB=$(call BuildFirmware/Default8M/$(1),$(1),omni-emb,O
 
 Image/Build/Profile/OMNI-PLUG=$(call BuildFirmware/Default8M/$(1),$(1),omni-plug,OMNI-PLUG)
 
+Image/Build/Profile/twist-speaker=$(call BuildFirmware/Default16M/$(1),$(1),twist-speaker,twist-speaker)
+
+Image/Build/Profile/twist-camera=$(call BuildFirmware/Default16M/$(1),$(1),twist-camera,twist-camera)
+
 Image/Build/Profile/OLINUXINO-RT5350F=$(call BuildFirmware/Default8M/$(1),$(1),olinuxino-rt5350f,OLINUXINO-RT5350F)
 
 Image/Build/Profile/OLINUXINO-RT5350F-EVB=$(call BuildFirmware/Default8M/$(1),$(1),olinuxino-rt5350f-evb,OLINUXINO-RT5350F-EVB)
@@ -743,6 +747,8 @@ define Image/Build/Profile/Default
 	$(call Image/Build/Profile/NW718,$(1))
 	$(call Image/Build/Profile/OMNI-EMB,$(1))
 	$(call Image/Build/Profile/OMNI-PLUG,$(1))
+	$(call Image/Build/Profile/twist-speaker,$(1))
+	$(call Image/Build/Profile/twist-camera,$(1))
 	$(call Image/Build/Profile/OLINUXINO-RT5350F,$(1))
 	$(call Image/Build/Profile/OLINUXINO-RT5350F-EVB,$(1))
 	$(call Image/Build/Profile/PSR-680W,$(1))

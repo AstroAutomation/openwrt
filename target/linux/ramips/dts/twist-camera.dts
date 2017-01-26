@@ -1,0 +1,103 @@
+/dts-v1/;
+
+/include/ "rt5350.dtsi"
+
+/ {
+	compatible = "ralink,rt5350-soc";
+	model = "Twist-Camera";
+	
+	palmbus@10000000 {
+		spi@b00 {
+			status = "okay";
+			m25p80@0 {
+				#address-cells = <1>;
+				#size-cells = <1>;
+				compatible = "w25q128";
+				reg = <0 0>;
+				linux,modalias = "w25q128";
+				spi-max-frequency = <20000000>;
+
+				partition@0 {
+					label = "u-boot";
+					reg = <0x0 0x30000>;
+				};
+
+				partition@30000 {
+					label = "u-boot-env";
+					reg = <0x30000 0x10000>;
+				};
+
+				factory: partition@40000 {
+					label = "factory";
+					reg = <0x40000 0x10000>;
+				};
+
+				partition@50000 {
+					label = "nvram";
+					reg = <0x50000 0x50000>;
+				};
+				
+				partition@A0000 {
+					label = "firmware";
+					reg = <0xA0000 0x7b0000>;
+					read-only;
+				};
+				
+				partition@850000 {
+					label = "firmware-alt";
+					reg = <0x850000 0x7b0000>;
+				};
+				
+			};
+		};
+		gpio1: gpio@660 {
+			status = "okay";
+		};
+		
+		i2s@a00 {
+			status = "okay";
+		};
+		
+		dma@2800 {
+			status = "okay";
+		};
+		
+		i2c@900 {
+			status = "okay";
+			clock-frequency = <400000>;
+
+			mfi_auth: i2c@11 {
+				compatible = "apple_auth_coproc";
+				reg = <0x11>;
+				    
+				gpio-reset = <&gpio0>;
+			};
+		};
+	};
+
+	pinctrl {
+		state_default: pinctrl0 {
+			gpio {
+				ralink,group = "led", "spi_cs1";
+				ralink,function = "gpio";
+			};
+		};
+	};
+
+	ethernet@10100000 {
+		mtd-mac-address = <&factory 0x4>;
+		status = "disabled";
+	};
+
+	esw@10110000 {
+		mediatek,portmap = <0x2f>;
+		mediatek,led_polarity = <0x17>;
+		status = "disabled";
+	};
+
+	wmac@10180000 {
+		ralink,mtd-eeprom = <&factory 0>;
+		ralink,led-polarity = <1>;
+	};
+    };
+};
