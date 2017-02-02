@@ -10,7 +10,10 @@
 	};
 
 	chosen {
-		bootargs = "console=ttyS0,57600";
+                bootargs = "console=null,115200 lpj=1198080 silent quiet";
+		//bootargs = "console=ttyS0,115200 lpj=1198080 initcall_debug printk_time=1 loglevel=8 quiet";
+		//bootargs = "console=ttyS0,115200 quiet";
+		//bootargs = "console=null lpj=1198080 quiet";
 	};
 
 	cpuintc: cpuintc@0 {
@@ -77,24 +80,6 @@
 			interrupts = <3>;
 		};
 
-		uart@500 {
-			compatible = "ralink,rt5350-uart", "ralink,rt2880-uart", "ns16550a";
-			reg = <0x500 0x100>;
-
-			resets = <&rstctrl 12>;
-			reset-names = "uart";
-
-			interrupt-parent = <&intc>;
-			interrupts = <5>;
-
-			reg-shift = <2>;
-
-			pinctrl-names = "default";
-			pinctrl-0 = <&uartf_pins>;
-
-			status = "disabled";
-		};
-
 		gpio0: gpio@600 {
 			compatible = "ralink,rt5350-gpio", "ralink,rt2880-gpio";
 			reg = <0x600 0x34>;
@@ -150,6 +135,25 @@
 			status = "disabled";
 		};
 
+		i2s@a00 {
+			compatible = "ralink,i2s-ctrl", "i2s-ralink", "i2s_ralink";
+			reg = <0xa00 0x100>;
+
+			resets = <&rstctrl 17>;
+			reset-names = "i2s";
+
+			#address-cells = <1>;
+			#size-cells = <0>;
+
+			interrupt-parent = <&intc>;
+			interrupts = <10>;
+			
+			pinctrl-names = "i2s uartf", "i2s gpio", "pcm i2s";
+			pinctrl-0 = <&uartf_pins>;
+			
+			status = "disabled";
+		};
+        
 		spi@b00 {
 			compatible = "ralink,rt5350-spi";
 			reg = <0xb00 0x100>;
@@ -161,7 +165,7 @@
 			#size-cells = <1>;
 
 			pinctrl-names = "default";
-			pinctrl-0 = <&spi_pins &spi_cs1>;
+			pinctrl-0 = <&spi_pins>;
 
 			status = "disabled";
 		};
@@ -181,13 +185,45 @@
 
 			reg-shift = <2>;
 		};
+		
+		uart@500 {
+			compatible = "ralink,rt5350-uart", "ralink,rt2880-uart", "ns16550a";
+			reg = <0x500 0x100>;
 
+			resets = <&rstctrl 12>;
+			reset-names = "uart";
+
+			interrupt-parent = <&intc>;
+			interrupts = <5>;
+
+			reg-shift = <2>;
+
+			pinctrl-names = "default";
+			pinctrl-0 = <&uartf_pins>;
+		};
+		
 		systick@d00 {
 			compatible = "ralink,rt5350-systick", "ralink,cevt-systick";
 			reg = <0xd00 0x10>;
 
 			interrupt-parent = <&cpuintc>;
 			interrupts = <7>;
+		};
+		
+		dma: dma@2800 {
+			compatible = "ralink,rt5350-gdma";
+			reg = <0x2800 0x02ff>;
+
+			resets = <&rstctrl 14>;
+			reset-names = "dma";
+
+			interrupt-parent = <&intc>;
+			interrupts = <7>;
+
+			#dma-cells = <1>;
+			dma-channels = <16>;
+			dma-requests = <16>;
+			status = "disabled";
 		};
 	};
 
@@ -227,7 +263,7 @@
 		uartf_pins: uartf {
 			uartf {
 				ralink,group = "uartf";
-				ralink,function = "uartf";
+				ralink,function = "i2s uartf";
 			};
 		};
 		spi_cs1: spi1 {
@@ -249,6 +285,7 @@
 
 		resets = <&rstctrl 22 &rstctrl 25>;
 		reset-names = "host", "device";
+		status = "disabled";
 	};
 
 	ethernet@10100000 {
@@ -292,6 +329,7 @@
 
 		interrupt-parent = <&intc>;
 		interrupts = <18>;
+		status = "disabled";
 	};
 
 	ohci@101c1000 {
@@ -303,5 +341,6 @@
 
 		interrupt-parent = <&intc>;
 		interrupts = <18>;
+		status = "disabled";
 	};
 };

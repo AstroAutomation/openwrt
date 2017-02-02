@@ -39,7 +39,7 @@ proto_dhcp_setup() {
 	done
 
 	[ "$broadcast" = 1 ] && broadcast="-B" || broadcast=
-	[ -n "$clientid" ] && clientid="-x 0x3d:${clientid//:/}" || clientid="-C"
+	[ -n "$clientid" ] && clientid="-x 0x3d:${clientid}" || clientid="-C"
 	[ -n "$iface6rd" ] && proto_export "IFACE6RD=$iface6rd"
 	[ "$iface6rd" != 0 -a -f /lib/netifd/proto/6rd.sh ] && append dhcpopts "-O 212"
 	[ -n "$zone6rd" ] && proto_export "ZONE6RD=$zone6rd"
@@ -54,7 +54,7 @@ proto_dhcp_setup() {
 		-s /lib/netifd/dhcp.script \
 		-f -t 0 -i "$iface" \
 		${ipaddr:+-r $ipaddr} \
-		${hostname:+-H $hostname} \
+		${hostname:+-x hostname:$hostname} \
 		${vendorid:+-V $vendorid} \
 		$clientid $broadcast $dhcpopts
 }

@@ -1,0 +1,15 @@
+Index: compat-wireless-2015-03-09/net/mac80211/rx.c
+===================================================================
+--- compat-wireless-2015-03-09.orig/net/mac80211/rx.c	2017-01-24 10:34:16.537926258 -0500
++++ compat-wireless-2015-03-09/net/mac80211/rx.c	2017-01-24 10:36:30.417569176 -0500
+@@ -3125,9 +3125,9 @@
+ 		CALL_RXH(ieee80211_rx_h_check_more_data)
+ 		CALL_RXH(ieee80211_rx_h_uapsd_and_pspoll)
+ 		CALL_RXH(ieee80211_rx_h_sta_process)
++		CALL_RXH(ieee80211_rx_h_michael_mic_verify)
+ 		CALL_RXH(ieee80211_rx_h_decrypt)
+ 		CALL_RXH(ieee80211_rx_h_defragment)
+-		CALL_RXH(ieee80211_rx_h_michael_mic_verify)
+ 		/* must be after MMIC verify so header is counted in MPDU mic */
+ #ifdef CPTCFG_MAC80211_MESH
+ 		if (ieee80211_vif_is_mesh(&rx->sdata->vif))
