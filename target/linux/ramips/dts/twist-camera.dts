@@ -15,7 +15,7 @@
 				compatible = "w25q128";
 				reg = <0 0>;
 				linux,modalias = "w25q128";
-				spi-max-frequency = <20000000>;
+				spi-max-frequency = <40000000>;
 
 				partition@0 {
 					label = "u-boot";
@@ -98,6 +98,10 @@
 	wmac@10180000 {
 		ralink,mtd-eeprom = <&factory 0>;
 		ralink,led-polarity = <1>;
+	};
+	
+	usbphy: usbphy {
+		status = "okay";
 	};
 	
 	ehci@101c0000 {
