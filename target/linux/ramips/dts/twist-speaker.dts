@@ -4,7 +4,7 @@
 
 / {
 	compatible = "ralink,rt5350-soc";
-	model = "Astro-Twist";
+	model = "Twist Speaker";
 	
 	twist_power_supply: power@0 {
 	};

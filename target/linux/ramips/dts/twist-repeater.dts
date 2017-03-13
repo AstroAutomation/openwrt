@@ -4,7 +4,7 @@
 
 / {
 	compatible = "ralink,rt5350-soc";
-	model = "Twist Camera";
+	model = "Twist WiFi Bridge";
 	
 	palmbus@10000000 {
 		spi@b00 {
@@ -81,7 +81,6 @@
 				ralink,group = "led", "spi_cs1";
 				ralink,function = "gpio";
 			};
-			
 			uartf {
 				ralink,group = "uartf";
 				ralink,function = "i2s uartf";
@@ -103,17 +102,5 @@
 	wmac@10180000 {
 		ralink,mtd-eeprom = <&factory 0>;
 		ralink,led-polarity = <1>;
-	};
-	
-	usbphy: usbphy {
-		status = "okay";
-	};
-	
-	ehci@101c0000 {
-		status = "okay";
-	};
-
-	ohci@101c1000 {
-		status = "okay";
 	};
 };
