@@ -24,10 +24,12 @@ system_config() {
 		return 1
 	}
 
+	DEVICE_TYPE=`cat /sys/firmware/devicetree/base/model`
+
 	MACADDR=`cat sys/devices/10180000.wmac/ieee80211/phy0/macaddress `
 	MACUNIQUE=`echo ${MACADDR//:} | cut -c 7-`
-	echo mac address is ${MACUNIQUE} > /dev/kmsg
-	echo "${hostname}-${MACUNIQUE}" > /proc/sys/kernel/hostname
+	
+	echo "${DEVICE_TYPE// /}-${MACUNIQUE}" > /proc/sys/kernel/hostname
 	[ -z "$conloglevel" -a -z "$buffersize" ] || dmesg ${conloglevel:+-n $conloglevel} ${buffersize:+-s $buffersize}
 	echo "$timezone" > /tmp/TZ
 	[ -n "$zonename" ] && [ -f "/usr/share/zoneinfo/$zonename" ] && ln -s "/usr/share/zoneinfo/$zonename" /tmp/localtime
