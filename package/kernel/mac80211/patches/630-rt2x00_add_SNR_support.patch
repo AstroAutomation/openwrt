@@ -1,0 +1,204 @@
+Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+===================================================================
+--- compat-wireless-2016-01-10.orig/drivers/net/wireless/ralink/rt2x00/rt2800lib.c	2017-03-20 16:52:41.596413260 -0400
++++ compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800lib.c	2017-03-20 16:53:09.951711774 -0400
+@@ -858,6 +858,14 @@
+ 	return (int)max(rssi0, rssi2);
+ }
+ 
++static int rt2800_agc_to_snr(u32 rxwi_w3)
++{    
++	s32 snr0 = rt2x00_get_field32(rxwi_w3, RXWI_W3_SNR0);
++	s32 snr1 = rt2x00_get_field32(rxwi_w3, RXWI_W3_SNR1);
++	s32 snr = ((int)max(snr0, snr1) * 3 + 8) >> 4;
++	return snr;
++}
++
+ void rt2800_process_rxwi(struct queue_entry *entry,
+ 			 struct rxdone_entry_desc *rxdesc)
+ {
+@@ -896,6 +904,24 @@
+ 	 * Convert descriptor AGC value to RSSI value.
+ 	 */
+ 	rxdesc->rssi = rt2800_agc_to_rssi(entry->queue->rt2x00dev, word);
++	
++	rt2x00_desc_read(rxwi, 3, &word);
++
++	/*
++	 * Convert descriptor AGC value to SNR value.
++	 */
++	rxdesc->noise = rxdesc->rssi - rt2800_agc_to_snr(word);
++// 	{
++// 	    u8 rates[3][16] = {{1,2,6,11,0,0,0,0,1,2,6,11,0,0,0,0},{6,9,12,18,24,36,48,51,0,0,0,0,0,0,0,0},{7,13,20,26,39,52,59,65,13,26,39,52,78,104,117,130}};
++// 	    u8 modeFlag = rxdesc->rate_mode;
++// 	    u8 mcsFlag = rxdesc->signal;
++// 	    u8 rate = 0;
++// 	    if (modeFlag == 3) modeFlag = 2;
++// 	    //if (modeFlag == 0 && rxdesc->flags | RX_FLAG_SHORT_GI) mcsFlag += 8;
++// 	    rate = rates[modeFlag][mcsFlag];
++// 	    if(rates[modeFlag][mcsFlag]) rate = rate * 10 / 9;
++// 	    trace_printk("rssi:%d,noise:%d,mcs:%d,mode:%d,sgi:%d,rate:%d\n", rxdesc->rssi, rxdesc->rssi - rxdesc->snr, rxdesc->signal, rxdesc->rate_mode, rxdesc->flags | RX_FLAG_SHORT_GI ? 1 : 0, rates[modeFlag][mcsFlag]);
++// 	}
+ 	/*
+ 	 * Remove RXWI descriptor from start of the buffer.
+ 	 */
+@@ -8951,6 +8977,7 @@
+ 		      struct survey_info *survey)
+ {
+ 	struct rt2x00_dev *rt2x00dev = hw->priv;
++	struct link_qual *qual = &rt2x00dev->link.qual;
+ 	struct ieee80211_conf *conf = &hw->conf;
+ 	u32 idle, busy, busy_ext;
+ 
+@@ -8958,6 +8985,7 @@
+ 		return -ENOENT;
+ 
+ 	survey->channel = conf->chandef.chan;
++	survey->noise = qual->noise;
+ 
+ 	rt2800_register_read(rt2x00dev, CH_IDLE_STA, &idle);
+ 	rt2800_register_read(rt2x00dev, CH_BUSY_STA, &busy);
+@@ -8966,7 +8994,8 @@
+ 	if (idle || busy) {
+ 		survey->filled = SURVEY_INFO_TIME |
+ 				 SURVEY_INFO_TIME_BUSY |
+-				 SURVEY_INFO_TIME_EXT_BUSY;
++				 SURVEY_INFO_TIME_EXT_BUSY |
++				 SURVEY_INFO_NOISE_DBM;
+ 
+ 		survey->time = (idle + busy) / 1000;
+ 		survey->time_busy = busy / 1000;
+Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2x00queue.h
+===================================================================
+--- compat-wireless-2016-01-10.orig/drivers/net/wireless/ralink/rt2x00/rt2x00queue.h	2017-03-20 16:52:41.596413260 -0400
++++ compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2x00queue.h	2017-03-20 16:52:41.592412229 -0400
+@@ -168,6 +168,7 @@
+  * @timestamp: RX Timestamp
+  * @signal: Signal of the received frame.
+  * @rssi: RSSI of the received frame.
++ * @noise: Noise floor of the received frame.
+  * @size: Data size of the received frame.
+  * @flags: MAC80211 receive flags (See &enum mac80211_rx_flags).
+  * @dev_flags: Ralink receive flags (See &enum rxdone_entry_desc_flags).
+@@ -181,6 +182,7 @@
+ 	u64 timestamp;
+ 	int signal;
+ 	int rssi;
++	int noise;
+ 	int size;
+ 	int flags;
+ 	int dev_flags;
+Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2x00.h
+===================================================================
+--- compat-wireless-2016-01-10.orig/drivers/net/wireless/ralink/rt2x00/rt2x00.h	2017-03-20 16:52:41.596413260 -0400
++++ compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2x00.h	2017-03-20 16:52:41.592412229 -0400
+@@ -227,6 +227,7 @@
+ 	 * link_tuner() callback function.
+ 	 */
+ 	int rssi;
++	int noise;
+ 	int false_cca;
+ 
+ 	/*
+@@ -257,6 +258,7 @@
+ };
+ 
+ DECLARE_EWMA(rssi, 1024, 8)
++DECLARE_EWMA(noise, 1024, 8)
+ 
+ /*
+  * Antenna settings about the currently active link.
+@@ -294,6 +302,14 @@
+ 	 * this value is updated by using the walking average.
+ 	 */
+ 	struct ewma_rssi rssi_ant;
++
++	/*
++	 * Current noise_floor average of the currently active
++	 * antenna.  Similar to the avg_rssi in the link_qual
++	 * structure this value is updated by using the walking
++	 * average.
++	 */
++	struct ewma_noise noise_ant;
+ };
+ 
+ /*
+@@ -319,6 +321,11 @@
+ 	 * Currently active average RSSI value
+ 	 */
+ 	struct ewma_rssi avg_rssi;
++	
++	/*
++	 * Currently active average RSSI value
++	 */
++	struct ewma_noise avg_noise;
+ 
+ 	/*
+ 	 * Work structure for scheduling periodic link tuning.
+
+Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2x00link.c
+===================================================================
+--- compat-wireless-2016-01-10.orig/drivers/net/wireless/ralink/rt2x00/rt2x00link.c	2017-03-20 16:52:41.596413260 -0400
++++ compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2x00link.c	2017-03-20 16:55:20.775801702 -0400
+@@ -32,6 +32,18 @@
+  * tell the driver to tune the device to maximum sensitivity.
+  */
+ #define DEFAULT_RSSI		-128
++#define DEFAULT_NOISE		-128
++
++static inline int rt2x00link_get_avg_noise(struct ewma_noise *ewma)
++{
++	unsigned long avg;
++
++	avg = ewma_noise_read(ewma);
++	if (avg)
++		return -avg;
++
++	return DEFAULT_NOISE;
++}
+ 
+ static inline int rt2x00link_get_avg_rssi(struct ewma_rssi *ewma)
+ {
+@@ -218,14 +230,16 @@
+ 		return;
+ 
+ 	/*
+-	 * Update global RSSI
++	 * Update global RSSI and noise floor
+ 	 */
+ 	ewma_rssi_add(&link->avg_rssi, -rxdesc->rssi);
++	ewma_noise_add(&link->avg_noise, -rxdesc->noise);
+ 
+ 	/*
+-	 * Update antenna RSSI
++	 * Update antenna RSSI and noise floor
+ 	 */
+ 	ewma_rssi_add(&ant->rssi_ant, -rxdesc->rssi);
++	ewma_noise_add(&ant->noise_ant, -rxdesc->noise);
+ }
+ 
+ void rt2x00link_start_tuner(struct rt2x00_dev *rt2x00dev)
+@@ -281,6 +295,7 @@
+ 	rt2x00dev->link.count = 0;
+ 	memset(qual, 0, sizeof(*qual));
+ 	ewma_rssi_init(&rt2x00dev->link.avg_rssi);
++	ewma_noise_init(&rt2x00dev->link.avg_noise);
+ 
+ 	/*
+ 	 * Restore the VGC level as stored in the registers,
+@@ -335,10 +350,13 @@
+ 	 * collect the RSSI data we could use this. Otherwise we
+ 	 * must fallback to the default RSSI value.
+ 	 */
+-	if (!qual->rx_success)
++	if (!qual->rx_success) {
+ 		qual->rssi = DEFAULT_RSSI;
+-	else
++		qual->noise = DEFAULT_NOISE;
++	} else {
+ 		qual->rssi = rt2x00link_get_avg_rssi(&link->avg_rssi);
++		qual->noise = rt2x00link_get_avg_noise(&link->avg_noise);
++	}
+ 
+ 	/*
+ 	 * Check if link tuning is supported by the hardware, some hardware
