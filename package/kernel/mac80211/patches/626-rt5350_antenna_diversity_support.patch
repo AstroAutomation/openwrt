@@ -112,13 +112,6 @@ Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
  	rt2800_rfcsr_write(rt2x00dev, 10, 0x53);
  	rt2800_rfcsr_write(rt2x00dev, 11, 0x4a);
  	rt2800_rfcsr_write(rt2x00dev, 12, 0x46);
-@@ -7180,7 +7212,7 @@
- 	rt2800_rfcsr_write(rt2x00dev, 60, 0x45);
- 	rt2800_rfcsr_write(rt2x00dev, 61, 0xd1);
- 	rt2800_rfcsr_write(rt2x00dev, 62, 0x00);
--	rt2800_rfcsr_write(rt2x00dev, 63, 0x00);
-+	rt2800_rfcsr_write(rt2x00dev, 63, 0x07);
- }
  
  static void rt2800_init_rfcsr_5390(struct rt2x00_dev *rt2x00dev)
 @@ -7881,12 +7913,18 @@
