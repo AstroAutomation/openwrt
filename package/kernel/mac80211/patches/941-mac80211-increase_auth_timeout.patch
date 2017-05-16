@@ -1,0 +1,56 @@
+Index: compat-wireless-2016-01-10/net/mac80211/mlme.c
+===================================================================
+--- compat-wireless-2016-01-10.orig/net/mac80211/mlme.c	2017-05-16 16:00:40.839205160 -0400
++++ compat-wireless-2016-01-10/net/mac80211/mlme.c	2017-05-16 16:03:57.931710369 -0400
+@@ -31,22 +31,22 @@
+ #include "rate.h"
+ #include "led.h"
+ 
+-#define IEEE80211_AUTH_TIMEOUT		(HZ / 5)
+-#define IEEE80211_AUTH_TIMEOUT_LONG	(HZ / 2)
+-#define IEEE80211_AUTH_TIMEOUT_SHORT	(HZ / 10)
+-#define IEEE80211_AUTH_MAX_TRIES	3
+-#define IEEE80211_AUTH_WAIT_ASSOC	(HZ * 5)
+-#define IEEE80211_ASSOC_TIMEOUT		(HZ / 5)
+-#define IEEE80211_ASSOC_TIMEOUT_LONG	(HZ / 2)
+-#define IEEE80211_ASSOC_TIMEOUT_SHORT	(HZ / 10)
+-#define IEEE80211_ASSOC_MAX_TRIES	3
++#define IEEE80211_AUTH_TIMEOUT		(HZ)
++#define IEEE80211_AUTH_TIMEOUT_LONG	(HZ)
++#define IEEE80211_AUTH_TIMEOUT_SHORT	(HZ / 2)
++#define IEEE80211_AUTH_MAX_TRIES	6
++#define IEEE80211_AUTH_WAIT_ASSOC	(HZ * 7)
++#define IEEE80211_ASSOC_TIMEOUT		(HZ)
++#define IEEE80211_ASSOC_TIMEOUT_LONG	(HZ)
++#define IEEE80211_ASSOC_TIMEOUT_SHORT	(HZ / 2)
++#define IEEE80211_ASSOC_MAX_TRIES	6
+ 
+-static int max_nullfunc_tries = 2;
++static int max_nullfunc_tries = 3;
+ module_param(max_nullfunc_tries, int, 0644);
+ MODULE_PARM_DESC(max_nullfunc_tries,
+ 		 "Maximum nullfunc tx tries before disconnecting (reason 4).");
+ 
+-static int max_probe_tries = 5;
++static int max_probe_tries = 7;
+ module_param(max_probe_tries, int, 0644);
+ MODULE_PARM_DESC(max_probe_tries,
+ 		 "Maximum probe tries before disconnecting (reason 4).");
+@@ -59,7 +59,7 @@
+  * probe on beacon miss before declaring the connection lost
+  * default to what we want.
+  */
+-static int beacon_loss_count = 7;
++static int beacon_loss_count = 10;
+ module_param(beacon_loss_count, int, 0644);
+ MODULE_PARM_DESC(beacon_loss_count,
+ 		 "Number of beacon intervals before we decide beacon was lost.");
+@@ -68,7 +68,7 @@
+  * Time the connection can be idle before we probe
+  * it to see if we can still talk to the AP.
+  */
+-#define IEEE80211_CONNECTION_IDLE_TIME	(30 * HZ)
++#define IEEE80211_CONNECTION_IDLE_TIME	(50 * HZ)
+ /*
+  * Time we wait for a probe response after sending
+  * a probe request because of beacon loss or for
