@@ -14,8 +14,8 @@ Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
  		rt2800_register_write(rt2x00dev, TX_SW_CFG2, 0x00000000);
  	} else if (rt2x00_rt(rt2x00dev, RT5350)) {
  		rt2800_register_write(rt2x00dev, TX_SW_CFG0, 0x00000404);
-++		rt2800_register_write(rt2x00dev, TX_SW_CFG1, 0x00080606);
-++		rt2800_register_write(rt2x00dev, TX_SW_CFG2, 0x00000000);
++		rt2800_register_write(rt2x00dev, TX_SW_CFG1, 0x00080606);
++		rt2800_register_write(rt2x00dev, TX_SW_CFG2, 0x00000000);
  	} else {
  		rt2800_register_write(rt2x00dev, TX_SW_CFG0, 0x00000000);
  		rt2800_register_write(rt2x00dev, TX_SW_CFG1, 0x00080606);
