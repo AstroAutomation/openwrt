@@ -1,7 +1,7 @@
 Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800.h
 ===================================================================
---- compat-wireless-2016-01-10.orig/drivers/net/wireless/ralink/rt2x00/rt2800.h	2017-05-15 02:48:01.326150947 +0000
-+++ compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800.h	2017-05-15 02:48:01.322150947 +0000
+--- compat-wireless-2016-01-10.orig/drivers/net/wireless/ralink/rt2x00/rt2800.h	2017-05-24 12:34:45.335781051 -0400
++++ compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800.h	2017-05-24 12:36:08.618888626 -0400
 @@ -94,6 +94,7 @@
  #define REV_RT3090E			0x0211
  #define REV_RT3390E			0x0211
@@ -12,8 +12,8 @@ Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800.h
  #define REV_RT5592C			0x0221
 Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
 ===================================================================
---- compat-wireless-2016-01-10.orig/drivers/net/wireless/ralink/rt2x00/rt2800lib.c	2017-05-15 02:48:01.326150947 +0000
-+++ compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800lib.c	2017-05-15 03:27:02.662150947 +0000
+--- compat-wireless-2016-01-10.orig/drivers/net/wireless/ralink/rt2x00/rt2800lib.c	2017-05-24 12:34:45.367780719 -0400
++++ compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800lib.c	2017-05-24 12:40:31.939288380 -0400
 @@ -3583,6 +3583,10 @@
  			rt2800_bbp_write(rt2x00dev, 86, 0x46);
  		else
@@ -25,37 +25,18 @@ Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
  	} else {
  		rt2800_bbp_write(rt2x00dev, 62, 0x37 - rt2x00dev->lna_gain);
  		rt2800_bbp_write(rt2x00dev, 63, 0x37 - rt2x00dev->lna_gain);
-@@ -3598,7 +3602,8 @@
- 				rt2800_bbp_write(rt2x00dev, 82, 0x62);
- 				rt2800_bbp_write(rt2x00dev, 75, 0x46);
- 			} else {
--				if (rt2x00_rt(rt2x00dev, RT3593))
-+				if (rt2x00_rt(rt2x00dev, RT3593) ||
-+				    rt2x00_rt(rt2x00dev, RT5350))
- 					rt2800_bbp_write(rt2x00dev, 82, 0x62);
- 				else
- 					rt2800_bbp_write(rt2x00dev, 82, 0x84);
-@@ -5735,6 +5740,10 @@
+@@ -5738,6 +5742,10 @@
  
  static void rt2800_init_bbp_3352(struct rt2x00_dev *rt2x00dev)
  {
 +	int ant, div_mode;
 +	u16 eeprom;
 +	u8 value;
-+	
++
  	rt2800_bbp_write(rt2x00dev, 3, 0x00);
  	rt2800_bbp_write(rt2x00dev, 4, 0x50);
  
-@@ -5785,6 +5794,8 @@
- 	if (rt2x00_rt(rt2x00dev, RT5350)) {
- 		rt2800_bbp_write(rt2x00dev, 105, 0x3c);
- 		rt2800_bbp_write(rt2x00dev, 106, 0x03);
-+
-+		rt2800_bbp_write(rt2x00dev, 128, 0x12);
- 	} else {
- 		rt2800_bbp_write(rt2x00dev, 105, 0x34);
- 		rt2800_bbp_write(rt2x00dev, 106, 0x05);
-@@ -5815,10 +5826,31 @@
+@@ -5820,10 +5828,31 @@
  	rt2800_bbp_write(rt2x00dev, 148, 0xc8);
  
  	if (rt2x00_rt(rt2x00dev, RT5350)) {
@@ -90,31 +71,7 @@ Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
  	}
  }
  
-@@ -7115,16 +7147,16 @@
- 
- static void rt2800_init_rfcsr_5350(struct rt2x00_dev *rt2x00dev)
- {
--	rt2800_rfcsr_write(rt2x00dev, 0, 0xf0);
--	rt2800_rfcsr_write(rt2x00dev, 1, 0x23);
-+	rt2800_rfcsr_write(rt2x00dev, 0, 0x20);
-+	rt2800_rfcsr_write(rt2x00dev, 1, 0x07);
- 	rt2800_rfcsr_write(rt2x00dev, 2, 0x50);
- 	rt2800_rfcsr_write(rt2x00dev, 3, 0x08);
--	rt2800_rfcsr_write(rt2x00dev, 4, 0x49);
-+	rt2800_rfcsr_write(rt2x00dev, 4, 0x4b);
- 	rt2800_rfcsr_write(rt2x00dev, 5, 0x10);
- 	rt2800_rfcsr_write(rt2x00dev, 6, 0xe0);
- 	rt2800_rfcsr_write(rt2x00dev, 7, 0x00);
--	rt2800_rfcsr_write(rt2x00dev, 8, 0xf1);
--	rt2800_rfcsr_write(rt2x00dev, 9, 0x02);
-+	rt2800_rfcsr_write(rt2x00dev, 8, 0xe2);
-+	rt2800_rfcsr_write(rt2x00dev, 9, 0x14);
- 	rt2800_rfcsr_write(rt2x00dev, 10, 0x53);
- 	rt2800_rfcsr_write(rt2x00dev, 11, 0x4a);
- 	rt2800_rfcsr_write(rt2x00dev, 12, 0x46);
- 
- static void rt2800_init_rfcsr_5390(struct rt2x00_dev *rt2x00dev)
-@@ -7881,12 +7913,18 @@
+@@ -7890,12 +7919,18 @@
  	if (rt2x00_rt(rt2x00dev, RT3070) ||
  	    rt2x00_rt(rt2x00dev, RT3090) ||
  	    rt2x00_rt(rt2x00dev, RT3352) ||

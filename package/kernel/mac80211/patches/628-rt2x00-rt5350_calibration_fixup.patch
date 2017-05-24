@@ -1,0 +1,48 @@
+Index: compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800lib.c
+===================================================================
+--- compat-wireless-2016-01-10.orig/drivers/net/wireless/ralink/rt2x00/rt2800lib.c	2017-05-24 12:19:13.404718115 -0400
++++ compat-wireless-2016-01-10/drivers/net/wireless/ralink/rt2x00/rt2800lib.c	2017-05-24 12:24:00.672438416 -0400
+@@ -4491,6 +4491,7 @@
+ 	case RT3071:
+ 	case RT3090:
+ 	case RT3572:
++	case RT5350:
+ 		delta += rt2800_get_gain_calibration_delta(rt2x00dev);
+ 		break;
+ 	default:
+@@ -5107,6 +5108,8 @@
+ 		rt2800_register_write(rt2x00dev, TX_SW_CFG2, 0x00000000);
+ 	} else if (rt2x00_rt(rt2x00dev, RT5350)) {
+ 		rt2800_register_write(rt2x00dev, TX_SW_CFG0, 0x00000404);
+++		rt2800_register_write(rt2x00dev, TX_SW_CFG1, 0x00080606);
+++		rt2800_register_write(rt2x00dev, TX_SW_CFG2, 0x00000000);
+ 	} else {
+ 		rt2800_register_write(rt2x00dev, TX_SW_CFG0, 0x00000000);
+ 		rt2800_register_write(rt2x00dev, TX_SW_CFG1, 0x00080606);
+@@ -5785,6 +5788,8 @@
+ 	if (rt2x00_rt(rt2x00dev, RT5350)) {
+ 		rt2800_bbp_write(rt2x00dev, 105, 0x3c);
+ 		rt2800_bbp_write(rt2x00dev, 106, 0x03);
++		
++		rt2800_bbp_write(rt2x00dev, 128, 0x12);
+ 	} else {
+ 		rt2800_bbp_write(rt2x00dev, 105, 0x34);
+ 		rt2800_bbp_write(rt2x00dev, 106, 0x05);
+@@ -7115,6 +7120,8 @@
+ 
+ static void rt2800_init_rfcsr_5350(struct rt2x00_dev *rt2x00dev)
+ {
++	rt2800_rf_init_calibration(rt2x00dev, 30);
++
+ 	rt2800_rfcsr_write(rt2x00dev, 0, 0xf0);
+ 	rt2800_rfcsr_write(rt2x00dev, 1, 0x23);
+ 	rt2800_rfcsr_write(rt2x00dev, 2, 0x50);
+@@ -7181,6 +7188,8 @@
+ 	rt2800_rfcsr_write(rt2x00dev, 61, 0xd1);
+ 	rt2800_rfcsr_write(rt2x00dev, 62, 0x00);
+ 	rt2800_rfcsr_write(rt2x00dev, 63, 0x00);
++
++	rt2800_led_open_drain_enable(rt2x00dev);
+ }
+ 
+ static void rt2800_init_rfcsr_5390(struct rt2x00_dev *rt2x00dev)
