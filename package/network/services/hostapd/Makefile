@@ -69,6 +69,7 @@ DRIVER_MAKEOPTS= \
 	CONFIG_DRIVER_HOSTAP=$(CONFIG_PACKAGE_kmod-hostap) \
 	CONFIG_IEEE80211N=$(HOSTAPD_IEEE80211N) \
 	CONFIG_DRIVER_WEXT=$(CONFIG_DRIVER_WEXT_SUPPORT) \
+	CONFIG_INTERNAL_LIBTOMMATH=y \
 
 ifeq ($(LOCAL_VARIANT),full)
   DRIVER_MAKEOPTS += CONFIG_IEEE80211W=$(CONFIG_DRIVER_11W_SUPPORT)
@@ -271,6 +272,13 @@ define Package/eapol-test
   DEPENDS:=$(DRV_DEPENDS)
 endef
 
+define Package/wpa-passphrase
+  SECTION:=net
+  CATEGORY:=Network
+  TITLE:=Set WPA passphrase for a SSID
+  DESCRIPTION:=
+  DEPENDS:=+librt
+endef
 
 ifneq ($(wildcard $(PKG_BUILD_DIR)/.config_*),$(subst .configured_,.config_,$(STAMP_CONFIGURED)))
   define Build/Configure/rebuild
@@ -333,7 +341,7 @@ define Build/Compile/wpad
 	$(call Build/RunMake,wpa_supplicant, \
 		CFLAGS="$$$$(cat $(PKG_BUILD_DIR)/.cflags)" \
 		MULTICALL=1 \
-		wpa_cli wpa_supplicant_multi.a \
+		wpa_cli wpa_passphrase wpa_supplicant_multi.a \
 		libwpa_ctrl.a
 	)
 	$(TARGET_CC) -o $(PKG_BUILD_DIR)/wpad \
@@ -352,7 +360,7 @@ endef
 
 define Build/Compile/supplicant
 	$(call Build/RunMake,wpa_supplicant, \
-		wpa_cli wpa_supplicant \
+		wpa_cli wpa_passphrase wpa_supplicant \
 		libwpa_ctrl.a
 	)
 endef
@@ -432,6 +440,11 @@ ifneq ($(LOCAL_TYPE),hostapd)
   endef
 endif
 
+define Package/wpa-passphrase/install
+	$(INSTALL_DIR) $(1)/usr/sbin
+	$(INSTALL_BIN) $(PKG_BUILD_DIR)/wpa_supplicant/wpa_passphrase $(1)/usr/sbin/
+endef
+
 ifeq ($(BUILD_VARIANT),supplicant-full)
   define Package/eapol-test/install
 	$(INSTALL_DIR) $(1)/usr/sbin
@@ -449,6 +462,7 @@ $(eval $(call BuildPackage,wpa-supplicant-mesh))
 $(eval $(call BuildPackage,wpa-supplicant-mini))
 $(eval $(call BuildPackage,wpa-supplicant-p2p))
 $(eval $(call BuildPackage,wpa-cli))
+$(eval $(call BuildPackage,wpa-passphrase))
 $(eval $(call BuildPackage,hostapd-utils))
 $(eval $(call BuildPackage,hostapd-common))
 $(eval $(call BuildPackage,hostapd-common-old))
